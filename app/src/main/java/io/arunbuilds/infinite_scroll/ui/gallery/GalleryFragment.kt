@@ -5,9 +5,11 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
 import io.arunbuilds.infinite_scroll.R
 import io.arunbuilds.infinite_scroll.databinding.FragmentGalleryBinding
@@ -30,13 +32,35 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery) {
                 footer = UnsplashPhotoLoadStateAdapter { adapter.retry() }
             )
             recyclerView.setHasFixedSize(true)
-
+            recyclerView.itemAnimator = null
+            buttonRetry.setOnClickListener {
+                adapter.retry()
+            }
         }
 
         viewModel.photos.observe(viewLifecycleOwner, Observer {
             adapter.submitData(viewLifecycleOwner.lifecycle, it)
 
         })
+        adapter.addLoadStateListener { loadState ->
+            binding.apply {
+                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                recyclerView.isVisible = loadState.source.refresh is LoadState.NotLoading
+                buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
+                textViewError.isVisible = loadState.source.refresh is LoadState.Error
+
+                // empty view conditions
+                if (loadState.source.refresh is LoadState.NotLoading &&
+                    loadState.append.endOfPaginationReached &&
+                    adapter.itemCount < 1
+                ) {
+                    recyclerView.isVisible = false
+                    textViewEmpty.isVisible = true
+                } else {
+                    textViewEmpty.isVisible = false
+                }
+            }
+        }
         setHasOptionsMenu(true)
     }
 
