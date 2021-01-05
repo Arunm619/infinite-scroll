@@ -11,8 +11,12 @@ import io.arunbuilds.infinite_scroll.R
 import io.arunbuilds.infinite_scroll.data.UnsplashPhoto
 import io.arunbuilds.infinite_scroll.databinding.ItemUnspashPhotoBinding
 
-class UnsplashPhotoAdapter :
+class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.UnsplashPhotoViewHolder>(PHOTO_COMPARATOR) {
+
+    interface OnItemClickListener {
+        fun onItemClick(photo: UnsplashPhoto)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UnsplashPhotoViewHolder {
         val binding =
@@ -28,8 +32,21 @@ class UnsplashPhotoAdapter :
     }
 
 
-    class UnsplashPhotoViewHolder(private val binding: ItemUnspashPhotoBinding) :
+    inner class UnsplashPhotoViewHolder(private val binding: ItemUnspashPhotoBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val currentPhoto = getItem(position)
+                    if (currentPhoto != null)
+                        listener.onItemClick(currentPhoto)
+                }
+
+            }
+        }
+
         fun bind(photo: UnsplashPhoto) {
             binding.apply {
                 Glide.with(itemView)
