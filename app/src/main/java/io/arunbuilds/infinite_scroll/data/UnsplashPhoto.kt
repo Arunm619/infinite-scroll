@@ -1,4 +1,4 @@
-package io.arunbuilds.infinite_scroll
+package io.arunbuilds.infinite_scroll.data
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
