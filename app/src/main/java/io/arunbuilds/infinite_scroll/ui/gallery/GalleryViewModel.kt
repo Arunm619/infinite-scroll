@@ -21,6 +21,6 @@ class GalleryViewModel @ViewModelInject constructor(
     }
 
     companion object {
-        private const val DEFAULT_QUERY = "I Love You"
+        private const val DEFAULT_QUERY = "Fuck you"
     }
 }

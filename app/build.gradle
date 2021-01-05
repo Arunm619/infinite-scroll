@@ -22,6 +22,10 @@ android {
         buildConfigField("String", "UNSPLASH_ACCESS_KEY", unsplash_access_key)
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
